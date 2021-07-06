@@ -11,3 +11,4 @@
  [1.0.0] - unreleased
 ----------------------
 
+- Add ``Dockerfile`` of MicroEJ BuildKit Docker Image for MicroEJ SDK 4.1.5 and 5.4.1
