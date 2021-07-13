@@ -20,34 +20,46 @@ MicroEJ SDK version ``5.4.0`` and above
 
 For MicroEJ SDK version ``5.4.0`` and above, please refer to `https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface`_.
 
+Build the image from ``Dockerfile``:
+
+.. code-block:: console
+
+   $ docker build -t microej_buildkit_5.4.1 5.4.1
+
 Start the image for interactive usage:
 
 .. code-block:: console
 
-   $ docker run --name microej_buildkit_5.4.1:latest -it bash
+   $ docker run --rm -it microej_buildkit_5.4.1:latest bash
 
 Build a project from a local folder:
 
 .. code-block:: console
 
-   $ docker run -v PATH/TO/PROJECT:/project -w /project --name microej_buildkit_5.4.1:latest -it mmm build
+   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project microej_buildkit_5.4.1:latest mmm build
 
 MicroEJ SDK version ``4.1.5`` to ``5.3.1``
 ------------------------------------------
 
 For MicroEJ SDK version ``4.1.5`` to ``5.3.1``, please refer to `https://github.com/MicroEJ/Tool-CommandLineBuild`_.
 
+Build the image from ``Dockerfile``:
+
+.. code-block:: console
+
+   $ docker build -t microej_buildkit_4.1.5 4.1.5
+
 Start the image for interactive usage:
 
 .. code-block:: console
 
-   $ docker run --name microej_buildkit_4.1.5:latest -it bash
+   $ docker run --rm -it microej_buildkit_4.1.5:latest bash
 
 Build a project from a local folder:
 
 .. code-block:: console
 
-   $ docker run -v PATH/TO/PROJECT:/project -w /project --name microej_buildkit_5.4.0:latest -it build_module_local.sh ./
+   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project microej_buildkit_5.4.0:latest build_module_local.sh ./
 
 Where to get help?
 ==================
