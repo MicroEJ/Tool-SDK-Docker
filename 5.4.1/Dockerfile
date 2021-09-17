@@ -35,29 +35,6 @@ ENV HOME /home/${user}
 # Set workdir
 WORKDIR ${HOME}
 
-ENV BUILD_KIT_HOME=$HOME/buildKit
-RUN mkdir -p $BUILD_KIT_HOME
-
-RUN curl -O https://repository.microej.com/p2/sdk/5.4.1/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202104161741.jar && \
-    unzip com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202104161741.jar repositories/microej-build-repository.zip && \
-    unzip repositories/microej-build-repository.zip -d $BUILD_KIT_HOME/microej-build-repository && \
-    rm -rf repositories/ && \
-    rm -f com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202104161741.jar
-
-RUN curl -O https://repository.microej.com/p2/sdk/5.4.1/plugins/com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar && \
-    unzip com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar cli/mmm-cli.zip && \
-    unzip cli/mmm-cli.zip -d $BUILD_KIT_HOME/ && \
-    rm -rf cli && \
-    unzip com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar resources/microej-ivysettings-5.4.xml && \
-    mkdir -p $BUILD_KIT_HOME/microej-module-repository/ && \
-    mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
-    rm -rf resources/ && \
-    rm -f com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar
-
-RUN echo 'sdk.version=5.4.1' > $BUILD_KIT_HOME/release.properties
-
-ENV PATH=$BUILD_KIT_HOME/bin:$PATH
-
 # Install SDK
 ENV ECLIPSE_HOME=$HOME/ECLIPSE
 RUN curl -O https://repository.microej.com/packages/SDK/21.03/zip/microej-sdk-21.03-linux_x86_64.zip && \
@@ -68,4 +45,41 @@ RUN curl -O https://repository.microej.com/packages/SDK/21.03/zip/microej-sdk-21
 # Configure SDK location
 RUN mkdir -p $HOME/.microej && \
     echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig
+
+# Update SDK to 5.4.1
+#  1. Uninstall SDK 5.4.0
+RUN $ECLIPSE_HOME/MicroEJ-SDK \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -uninstallIU \
+    com.is2t.microej.sdk.feature.feature.group
+#  2. Install SDK 5.4.1
+RUN $ECLIPSE_HOME/MicroEJ-SDK \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -repository \
+    https://repository.microej.com/p2/sdk/5.4.1 \
+    -installIUs \
+    com.is2t.microej.sdk.feature.feature.group
+
+# Extract Build Kit from SDK
+ENV BUILD_KIT_HOME=$HOME/buildKit
+RUN mkdir -p $BUILD_KIT_HOME
+
+RUN unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202104161741.jar repositories/microej-build-repository.zip && \
+    unzip repositories/microej-build-repository.zip -d $BUILD_KIT_HOME/microej-build-repository && \
+    rm -rf repositories/
+
+RUN unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar cli/mmm-cli.zip && \
+    unzip cli/mmm-cli.zip -d $BUILD_KIT_HOME/ && \
+    rm -rf cli && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar resources/microej-ivysettings-5.4.xml && \
+    mkdir -p $BUILD_KIT_HOME/microej-module-repository/ && \
+    mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
+    rm -rf resources/
+
+RUN echo 'sdk.version=5.4.1' > $BUILD_KIT_HOME/release.properties
+
+ENV PATH=$BUILD_KIT_HOME/bin:$PATH
+
 
