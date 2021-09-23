@@ -1,12 +1,17 @@
 # Dockerfile
 #
 # Copyright 2021 MicroEJ Corp. All rights reserved.
-# Use of this source code is governed by a BSD-style license that can be found with this software.
-#
+# This library is provided in source code for use, modification and test, subject to license terms.
+# Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 FROM adoptopenjdk:8
 
-RUN apt-get update
-RUN apt-get install -y git unzip udev
+RUN apt-get update \
+    && apt-get install -y \
+    git \
+    unzip \
+    udev \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'SUBSYSTEM=="usb", GOTO="usbdongle_start"\n' \
     'SUBSYSTEMS=="usb", GOTO="usbdongle_start"\n' \

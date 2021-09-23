@@ -5,8 +5,15 @@
 # Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 FROM adoptopenjdk:8
 
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y git unzip udev
+RUN apt-get update \
+    && apt-get upgrade -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    git \
+    unzip \
+    udev \
+    libwebkit2gtk-4.0-37 \ # Required for Eclipse-based SDK to run
+    && rm -rf /var/lib/apt/lists/*
+
 RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'SUBSYSTEM=="usb", GOTO="usbdongle_start"\n' \
     'SUBSYSTEMS=="usb", GOTO="usbdongle_start"\n' \
@@ -14,9 +21,6 @@ RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'LABEL="usbdongle_start"\n' \
     'ATTRS{idVendor}=="096e" , ATTRS{idProduct}=="0006" , MODE="0666"\n' \
     'LABEL="usbdongle_end"' > /etc/udev/rules.d/91-usbdongle.rules
-
-# Required for Eclipse-based SDK to run
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libwebkit2gtk-4.0-37
 
 # Set the new user parameter.
 ARG user=jenkins
