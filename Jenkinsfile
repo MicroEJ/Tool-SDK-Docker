@@ -4,6 +4,26 @@
 pipeline {
     agent { label 'docker' }
     stages {
+        stage('Lint check 5.4.1') {
+            agent { docker {
+                image 'hadolint/hadolint:latest-alpine'
+                reuseNode true
+            }
+            }
+            steps {
+                sh 'hadolint --no-fail 5.4.1/Dockerfile'
+            }
+        }
+        stage('Lint check 4.1.5') {
+            agent { docker {
+                image 'hadolint/hadolint:latest-alpine'
+                reuseNode true
+            }
+            }
+            steps {
+                sh 'hadolint --no-fail 4.1.5/Dockerfile'
+            }
+        }
         stage('Build 5.4.1') {
             steps {
                 sh 'docker build -t sdk:5.4.1 5.4.1'
