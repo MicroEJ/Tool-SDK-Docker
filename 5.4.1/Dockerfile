@@ -15,7 +15,8 @@ RUN apt-get update && \
     sshpass \
     # Required for Eclipse-based SDK to run
     libwebkit2gtk-4.0-37 && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'SUBSYSTEM=="usb", GOTO="usbdongle_start"\n' \

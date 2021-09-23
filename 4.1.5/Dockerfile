@@ -12,7 +12,8 @@ RUN apt-get update \
     udev \
     ssh \
     sshpass \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'SUBSYSTEM=="usb", GOTO="usbdongle_start"\n' \
