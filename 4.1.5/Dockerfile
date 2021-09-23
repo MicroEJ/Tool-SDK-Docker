@@ -10,6 +10,8 @@ RUN apt-get update \
     git \
     unzip \
     udev \
+    ssh \
+    sshpass \
     && rm -rf /var/lib/apt/lists/*
 
 RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \

@@ -11,6 +11,8 @@ RUN apt-get update && \
     git \
     unzip \
     udev \
+    ssh \
+    sshpass \
     # Required for Eclipse-based SDK to run
     libwebkit2gtk-4.0-37 && \
     rm -rf /var/lib/apt/lists/*
