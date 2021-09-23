@@ -7,7 +7,7 @@ FROM eclipse-temurin:8
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     git \
     unzip \
     udev \
