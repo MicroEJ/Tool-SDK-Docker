@@ -15,28 +15,28 @@ This is the git repository to build the MicroEJ BuildKit Docker Image for variou
 Documentation
 =============
 
-MicroEJ SDK version ``5.4.0`` and above
+MicroEJ SDK version ``5.4.1`` and above
 ---------------------------------------
 
-For MicroEJ SDK version ``5.4.0`` and above, please refer to `https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface`_.
+For MicroEJ SDK version ``5.4.1`` and above, please refer to `https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface`_.
 
 Build the image from ``Dockerfile``:
 
 .. code-block:: console
 
-   $ docker build -t microej_buildkit_5.4.1 5.4.1
+   $ docker build -t sdk:5.4.1 5.4.1
 
 Start the image for interactive usage:
 
 .. code-block:: console
 
-   $ docker run --rm -it microej_buildkit_5.4.1:latest bash
+   $ docker run --rm -it sdk:5.4.1 bash
 
 Build a project from a local folder:
 
 .. code-block:: console
 
-   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project microej_buildkit_5.4.1:latest mmm build
+   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project sdk:5.4.1 mmm build
 
 MicroEJ SDK version ``4.1.5`` to ``5.3.1``
 ------------------------------------------
@@ -47,19 +47,19 @@ Build the image from ``Dockerfile``:
 
 .. code-block:: console
 
-   $ docker build -t microej_buildkit_4.1.5 4.1.5
+   $ docker build -t sdk:4.1.5 4.1.5
 
 Start the image for interactive usage:
 
 .. code-block:: console
 
-   $ docker run --rm -it microej_buildkit_4.1.5:latest bash
+   $ docker run --rm -it sdk:4.1.5 bash
 
 Build a project from a local folder:
 
 .. code-block:: console
 
-   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project microej_buildkit_5.4.0:latest build_module_local.sh ./
+   $ docker run --rm -v PATH/TO/PROJECT:/project -w /project sdk:4.1.5 build_module_local.sh ./
 
 Where to get help?
 ==================
