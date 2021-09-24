@@ -32,6 +32,29 @@ pipeline {
                 sh 'docker build -t sdk:5.4.1 5.4.1'
             }
         }
+        stage('Test: ensure sdk:5.4.1 can run docker') {
+            agent { docker {
+                image 'sdk:5.4.1'
+                reuseNode true
+                args '-u root -v/var/run/docker.sock:/var/run/docker.sock'
+            }
+            }
+            steps { sh 'docker run --rm -t hello-world' }
+        }
+        stage('Build 4.1.5') {
+            steps {
+                sh 'docker build -t sdk:4.1.5 4.1.5'
+            }
+        }
+        stage('Test: ensure sdk:4.1.5 can run docker') {
+            agent { docker {
+                image 'sdk:4.1.5'
+                reuseNode true
+                args '-u root -v/var/run/docker.sock:/var/run/docker.sock'
+            }
+            }
+            steps { sh 'docker run --rm -t hello-world' }
+        }
         stage('Test: build microej-studio-rebrand') {
             agent { docker {
                 image 'sdk:5.4.1'
@@ -151,11 +174,6 @@ pipeline {
                 sh 'cd Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm'
                 sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=firmware-singleapp" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=firmware-singleapp -Dproject.rev=1.0.0 -Dskeleton.target.dir=firmware-singleapp'
                 sh 'cd firmware-singleapp && mmm -D"platform-loader.target.platform.dir=$(pwd)/../Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32WROVER-Platform-GNUv52b96_xtensa-esp32-psram-1.7.1/source" -D"virtual.device.sim.only=SET"'
-            }
-        }
-        stage('Build 4.1.5') {
-            steps {
-                sh 'docker build -t sdk:4.1.5 4.1.5'
             }
         }
     }
