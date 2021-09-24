@@ -4,6 +4,9 @@
 pipeline {
     agent { label 'docker' }
     stages {
+        stage('Git clean') {
+            steps { sh 'git clean -fdx' }
+        }
         stage('Lint check 5.4.1') {
             agent { docker {
                 image 'hadolint/hadolint:latest-alpine'
