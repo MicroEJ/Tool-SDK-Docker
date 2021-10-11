@@ -4,8 +4,14 @@
 	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 
 .. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.4.json
+  :alt: SDK 5.4 Compatible
 
 .. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_4.1.json
+  :alt: SDK 4.1 Compatible
+
+.. image:: https://shields.microej.com/docker/automated/microej/sdk
+  :target: https://hub.docker.com/r/microej/sdk
+  :alt: Docker Automated build
 
 =================================
  Docker for MicroEJ BuildKit SDK
