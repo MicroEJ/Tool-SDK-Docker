@@ -67,6 +67,13 @@ Build a project from a local folder:
 
    $ docker run --rm -v PATH/TO/PROJECT:/project -w /project sdk:4.1.5 build_module_local.sh ./
 
+Automated tests
+---------------
+
+| A Jenkinsfile is at the root of this project to automatically test project Dockerfiles. You can launch it using Jenkins CI.
+| We followed the Jenkins recommendations to write this Jenkinsfile : `Using Docker with Pipeline <https://www.jenkins.io/doc/book/pipeline/docker/>`_.
+| If you want to run it, you need to have at least one node labelled "docker".
+
 Where to get help?
 ==================
 
