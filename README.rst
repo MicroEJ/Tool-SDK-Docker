@@ -3,6 +3,12 @@
 	This library is provided in source code for use, modification and test, subject to license terms.
 	Any modification of the source code will break MicroEJ Corp. warranties on the whole library.
 
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.4.json
+  :alt: SDK 5.4 Compatible
+
+.. image:: https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_4.1.json
+  :alt: SDK 4.1 Compatible
+
 =================================
  Docker for MicroEJ BuildKit SDK
 =================================
@@ -18,7 +24,7 @@ Documentation
 MicroEJ SDK version ``5.4.1`` and above
 ---------------------------------------
 
-For MicroEJ SDK version ``5.4.1`` and above, please refer to `https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface`_.
+For MicroEJ SDK version ``5.4.1`` and above, please refer to https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface.
 
 Build the image from ``Dockerfile``:
 
@@ -41,7 +47,7 @@ Build a project from a local folder:
 MicroEJ SDK version ``4.1.5`` to ``5.3.1``
 ------------------------------------------
 
-For MicroEJ SDK version ``4.1.5`` to ``5.3.1``, please refer to `https://github.com/MicroEJ/Tool-CommandLineBuild`_.
+For MicroEJ SDK version ``4.1.5`` to ``5.3.1``, please refer to https://github.com/MicroEJ/Tool-CommandLineBuild.
 
 Build the image from ``Dockerfile``:
 
@@ -60,6 +66,13 @@ Build a project from a local folder:
 .. code-block:: console
 
    $ docker run --rm -v PATH/TO/PROJECT:/project -w /project sdk:4.1.5 build_module_local.sh ./
+
+Automated tests
+---------------
+
+| A Jenkinsfile is at the root of this project to automatically test project Dockerfiles. You can launch it using Jenkins CI.
+| We followed the Jenkins recommendations to write this Jenkinsfile : `Using Docker with Pipeline <https://www.jenkins.io/doc/book/pipeline/docker/>`_.
+| If you want to run it, you need to have at least one node labelled "docker".
 
 Where to get help?
 ==================
