@@ -77,6 +77,6 @@ RUN curl -O https://repository.microej.com/packages/SDK/4.1.5/zip/microej-sdk-4.
     rm -rf microej-sdk-20.12-linux_x86_64.zip plugins && \
 # V) Configure BuildKit
     echo "\neasyant.inject.build.compiler=org.eclipse.jdt.core.JDTCompilerAdapter" >> Tool-CommandLineBuild/local-build.properties && \
-    echo "\neasyant.inject.eclipse.home=\"${ECLIPSE_HOME}\"" >> Tool-CommandLineBuild/local-build.properties && \
+    echo "\neasyant.inject.eclipse.home=${ECLIPSE_HOME}" >> Tool-CommandLineBuild/local-build.properties && \
     echo 'sdk.version=4.1.5' > $MICROEJ_BUILDKIT_HOME/release.properties
 
