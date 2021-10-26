@@ -8,6 +8,12 @@
 ===========
 
 ----------------------
+ [1.0.1] - Unreleased
+----------------------
+
+- Add missing dependencies to build MicroEJ Platforms with MICROEJ SDK 4.1.5
+
+----------------------
  [1.0.0] - 2021-10-07
 ----------------------
 
