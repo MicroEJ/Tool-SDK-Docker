@@ -177,5 +177,26 @@ pipeline {
                 sh 'cd firmware-singleapp && mmm -D"platform-loader.target.platform.dir=$(pwd)/../Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32WROVER-Platform-GNUv52b96_xtensa-esp32-psram-1.7.1/source" -D"virtual.device.sim.only=SET"'
             }
         }
+
+        stage('Test 4.1.5: build platform') {
+            agent { docker {
+                image 'sdk:4.1.5'
+                reuseNode true
+            }
+            }
+            steps {
+                sh 'rm -rf Platform-Espressif-ESP-WROVER-KIT-V4.1'
+                sh 'git clone --depth 1 https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1'
+                // Remove mccom-install not provided by SDK:4.1.5
+                sh 'sed "/mccom-install/d" -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy'
+                // Override mccom-install targets with empty ones
+                sh 'sed "/<project.*/a <target name=\"readme:init\" />" -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
+                sh 'sed "/<project.*/a <target name=\"changelog:init\" />" -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
+                // Add microEJCentral to the list of resolvers to fetch the dependencies
+                sh 'sed "/<chain name=\"fetchRelease\">/a <url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>" -i ${MICROEJ_BUILDKIT_HOME}/ivy/ivysettings.xml'
+                // XXX This fails because we don't have an eval license, but the build per see is started with eclipse
+                sh 'build_module_local.sh Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/'
+            }
+        }
     }
 }
