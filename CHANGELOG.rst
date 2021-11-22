@@ -8,6 +8,16 @@
 ===========
 
 ----------------------
+ [1.0.1] - Unreleased
+----------------------
+
+- Convert readme to markdown as reStructuredText is not supported by Docker Hub
+- Update user and group to ``microej`` and ``microej``
+- Add FAQ for some frequently asked questions
+- Update documentation to refer to our docker hub and github repository
+- Change path to buildkit home to ``/var/lib/microej`` for ``sdk:4.1.5`` and ``sdk:5.4.1``
+
+----------------------
  [1.0.0] - 2021-10-07
 ----------------------
 
