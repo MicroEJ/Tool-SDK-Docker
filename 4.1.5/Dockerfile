@@ -37,25 +37,22 @@ RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
     'LABEL="usbdongle_end"' > /etc/udev/rules.d/91-usbdongle.rules
 
 # Set the new user parameter.
-ARG user=jenkins
-ARG group=jenkins
+ARG user=microej
+ARG group=microej
 ARG uid=1000
 ARG gid=1000
 RUN addgroup --gid ${gid} ${group} && \
     adduser --home /home/${user} --uid ${uid} --ingroup ${group} --disabled-password ${user}
 
-# Good practice, switch back to user.
-USER ${user}
-
 # Set env
 ENV HOME /home/${user}
-ENV ECLIPSE_HOME=$HOME/ECLIPSE
+ENV ECLIPSE_HOME=/opt/eclipse
 ENV MICROEJ_BUILD_JDK_HOME=$JAVA_HOME
-ENV MICROEJ_BUILDKIT_HOME=${HOME}/Tool-CommandLineBuild
+ENV MICROEJ_BUILDKIT_HOME=/opt/tool-cli-build
 ENV PATH=$MICROEJ_BUILDKIT_HOME:$PATH
 
 # Set workdir
-WORKDIR ${HOME}
+WORKDIR $HOME
 
 # I) Install SDK
 RUN curl -O https://repository.microej.com/packages/SDK/4.1.5/zip/microej-sdk-4.1.5-linux_x86_64.zip && \
@@ -63,20 +60,25 @@ RUN curl -O https://repository.microej.com/packages/SDK/4.1.5/zip/microej-sdk-4.
     unzip microej-sdk-4.1.5-linux_x86_64.zip -d $ECLIPSE_HOME && \
     rm -f microej-sdk-4.1.5-linux_x86_64.zip && \
 # II) Install Tool-CommandLineBuild
-    git clone --recursive https://github.com/MicroEJ/Tool-CommandLineBuild.git && \
+    git clone --recursive https://github.com/MicroEJ/Tool-CommandLineBuild.git $MICROEJ_BUILDKIT_HOME && \
 # III) Extract BuildKit from SDK
-    mkdir -p Tool-CommandLineBuild/buildKit/ && \
-    unzip ${ECLIPSE_HOME}/plugins/com.is2t.eclipse.plugin.easyant4e_1.7.3.20180621-1638.jar 'lib/*' -d Tool-CommandLineBuild/buildKit/ant && \
+    mkdir -p $MICROEJ_BUILDKIT_HOME/buildKit/ && \
+    unzip ${ECLIPSE_HOME}/plugins/com.is2t.eclipse.plugin.easyant4e_1.7.3.20180621-1638.jar 'lib/*' -d $MICROEJ_BUILDKIT_HOME/buildKit/ant && \
     unzip ${ECLIPSE_HOME}/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.0.20180621-1638.jar repositories/is2t_repo.zip && \
-    unzip repositories/is2t_repo.zip -d Tool-CommandLineBuild/buildKit/microej-build-repository && \
+    unzip repositories/is2t_repo.zip -d $MICROEJ_BUILDKIT_HOME/buildKit/microej-build-repository && \
     rm -rf repositories && \
 # IV) Install jdtCompiler from SDK 20.12
     curl -O https://repository.microej.com/packages/SDK/20.12/zip/microej-sdk-20.12-linux_x86_64.zip && \
     unzip microej-sdk-20.12-linux_x86_64.zip 'plugins/com.is2t.eclipse.plugin.easyant4e_2.3.1.202012101611.jar' && \
-    unzip plugins/com.is2t.eclipse.plugin.easyant4e_2.3.1.202012101611.jar lib/jdtCompilerAdapter.jar lib/org.eclipse.jdt.compiler.apt.jar lib/org.eclipse.jdt.core.jar -d Tool-CommandLineBuild/buildKit/ant/ && \
+    unzip plugins/com.is2t.eclipse.plugin.easyant4e_2.3.1.202012101611.jar lib/jdtCompilerAdapter.jar lib/org.eclipse.jdt.compiler.apt.jar lib/org.eclipse.jdt.core.jar -d $MICROEJ_BUILDKIT_HOME/buildKit/ant/ && \
     rm -rf microej-sdk-20.12-linux_x86_64.zip plugins && \
 # V) Configure BuildKit
-    echo "\neasyant.inject.build.compiler=org.eclipse.jdt.core.JDTCompilerAdapter" >> Tool-CommandLineBuild/local-build.properties && \
-    echo "\neasyant.inject.eclipse.home=\"${ECLIPSE_HOME}\"" >> Tool-CommandLineBuild/local-build.properties && \
-    echo 'sdk.version=4.1.5' > $MICROEJ_BUILDKIT_HOME/release.properties
+    echo "\neasyant.inject.build.compiler=org.eclipse.jdt.core.JDTCompilerAdapter" >> $MICROEJ_BUILDKIT_HOME/local-build.properties && \
+    echo "\neasyant.inject.eclipse.home=${ECLIPSE_HOME}" >> $MICROEJ_BUILDKIT_HOME/local-build.properties && \
+    echo 'sdk.version=4.1.5' > $MICROEJ_BUILDKIT_HOME/release.properties && \
+    chown $user:$group $MICROEJ_BUILDKIT_HOME/local-build.properties && \
+    chown -R $user:$group $MICROEJ_BUILDKIT_HOME/ivy && \
+    mkdir $MICROEJ_BUILDKIT_HOME/cache && chown $user:$group $MICROEJ_BUILDKIT_HOME/cache
 
+# Good practice, switch back to user.
+USER ${user}
