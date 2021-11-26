@@ -4,8 +4,8 @@
 node('docker') {
 	def image
 
-	stage('Git clean') {
-		sh 'git clean -fdx'
+	stage('Cleanup') {
+		cleanWs()
 	}
 	stage('Lint check 4.1.5') {
 		docker.image('hadolint/hadolint:latest-alpine').inside {
