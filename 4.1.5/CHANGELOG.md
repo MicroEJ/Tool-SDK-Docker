@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Add missing dependencies to build MicroEJ Platforms with MICROEJ SDK 4.1.5
+
 ### Changed
 - Change path for buildkit home to ``/opt/tool-cli-build``
 - Update user and group to ``microej`` and ``microej``
