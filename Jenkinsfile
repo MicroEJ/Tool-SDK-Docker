@@ -4,8 +4,9 @@
 node('docker') {
 	def image
 
-	stage('Git clean') {
-		sh 'git clean -fdx'
+	stage('Checkout') {
+		cleanWs()
+		checkout scm
 	}
 	stage('Lint check 4.1.5') {
 		docker.image('hadolint/hadolint:latest-alpine').inside {
@@ -46,6 +47,21 @@ node('docker') {
 			sh 'echo "skip.license.checker=true\nskip.readme.checker=true\nskip.changelog.checker=true" > build.properties'
 			sh 'build_module_local.sh Demo-Widget/com.microej.demo.widget/ release build.properties'
 			sh 'ls release/com/microej/demo/widget/6.1.1/ivy-6.1.1.xml'
+		}
+	}
+	stage('Test: build platform') {
+		image.inside {
+			sh 'rm -rf Platform-Espressif-ESP-WROVER-KIT-V4.1'
+			sh 'git clone --depth 1 https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1'
+			// Remove mccom-install not provided by SDK:4.1.5
+			sh 'sed \'/mccom-install/d\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy'
+			// Override mccom-install targets with empty ones
+			sh 'sed \'/<project.*/a <target name="readme:init" />\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
+			sh 'sed \'/<project.*/a <target name="changelog:init" />\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
+			// Add microEJCentral to the list of resolvers to fetch the dependencies
+			sh 'sed \'/<chain name=\"fetchRelease\">/a <url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>\' -i $MICROEJ_BUILDKIT_HOME/ivy/ivysettings.xml'
+			// This fails because we don't have an eval license, but the build per see is started with eclipse
+			sh 'build_module_local.sh Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ | grep "No license found"'
 		}
 	}
 

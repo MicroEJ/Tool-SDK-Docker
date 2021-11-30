@@ -24,7 +24,8 @@ RUN apt-get update && \
     ssh \
     sshpass \
     # Required for Eclipse-based SDK to run
-    libwebkit2gtk-4.0-37 && \
+    libxtst6 \
+    libgtk2.0-0 && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
