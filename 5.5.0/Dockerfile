@@ -29,20 +29,17 @@ RUN apt-get update && \
     apt-get clean
 
 # Set the new user parameter.
-ARG user=jenkins
-ARG group=jenkins
+ARG user=microej
+ARG group=microej
 ARG uid=1000
 ARG gid=1000
 RUN addgroup --gid ${gid} ${group} && \
     adduser --home /home/${user} --uid ${uid} --ingroup ${group} --disabled-password ${user}
 
-# Good practice, switch back to user.
-USER ${user}
-
 # Set env
 ENV HOME /home/${user}
-ENV ECLIPSE_HOME=$HOME/ECLIPSE
-ENV BUILD_KIT_HOME=$HOME/buildKit
+ENV ECLIPSE_HOME=/opt/eclipse
+ENV BUILD_KIT_HOME=/opt/buildKit
 ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 
 # Set workdir
@@ -55,6 +52,7 @@ RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21
     rm -f microej-sdk-21.11-linux_x86_64.zip && \
 # II) Configure SDK location
     mkdir -p $HOME/.microej && \
+    chown $user:$group $HOME/.microej && \
     echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig && \
 # III) Extract Build Kit from SDK
     mkdir -p $BUILD_KIT_HOME && \
@@ -72,6 +70,10 @@ RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21
     mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
     rm -rf resources/ && \
 #     4. Set SDK version
-    echo 'sdk.version=5.5.0' > $BUILD_KIT_HOME/release.properties
+    echo 'sdk.version=5.5.0' > $BUILD_KIT_HOME/release.properties && \
+ 	mkdir -p $HOME/.microej/build-repository-cache && \
+	ln -s $HOME/.microej/build-repository-cache $BUILD_KIT_HOME/microej-build-repository/cache && \
+	chown $user:$group $BUILD_KIT_HOME/microej-build-repository/cache
 
-
+# Good practice, switch back to user.
+USER ${user}
