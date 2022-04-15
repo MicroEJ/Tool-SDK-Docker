@@ -1,5 +1,5 @@
+![SDK 5.5 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.5.json)
 ![SDK 5.4 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.4.json)
-
 ![SDK 4.1 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_4.1.json)
 
 # Docker for MicroEJ BuildKit SDK
