@@ -3,6 +3,11 @@
 node('docker') {
 	def image
 
+	def platform_dir = "Platform-Espressif-ESP-WROVER-KIT-V4.1"
+	def platform_url = "https://github.com/MicroEJ/${platform_dir}"
+	def platform_tag = "1.8.4"
+	def platform_target = "ESP32WROVER-Platform-GNUv52b96_xtensa-esp32-psram-${platform_tag}"
+
 	stage('Checkout') {
 		cleanWs()
 		checkout scm
@@ -50,17 +55,17 @@ node('docker') {
 	}
 	stage('Test: build platform') {
 		image.inside {
-			sh 'rm -rf Platform-Espressif-ESP-WROVER-KIT-V4.1'
-			sh 'git clone --depth 1 https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1'
+			sh "rm -rf ${platform_dir}"
+			sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
 			// Remove mccom-install not provided by SDK:4.1.5
-			sh 'sed \'/mccom-install/d\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy'
+			sh "sed '/mccom-install/d' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy"
 			// Override mccom-install targets with empty ones
-			sh 'sed \'/<project.*/a <target name="readme:init" />\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
-			sh 'sed \'/<project.*/a <target name="changelog:init" />\' -i Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant'
+			sh "sed '/<project.*/a <target name=\"readme:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
+			sh "sed '/<project.*/a <target name=\"changelog:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
 			// Add microEJCentral to the list of resolvers to fetch the dependencies
 			sh 'sed \'/<chain name=\"fetchRelease\">/a <url name=\"microEJForge\" m2compatible=\"true\"><artifact pattern=\"http://forge.microej.com/artifactory/microej-central-repository-release/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"http://forge.microej.com/artifactory/microej-central-repository-release/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url><url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>\' -i $MICROEJ_BUILDKIT_HOME/ivy/ivysettings.xml'
 			// This fails because we don't have an eval license, but the build per see is started with eclipse
-			sh 'build_module_local.sh Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ | grep "No license found"'
+			sh "build_module_local.sh ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ | grep 'No license found'"
 		}
 	}
 
@@ -141,11 +146,11 @@ node('docker') {
 		}
 		stage("Test(${folder}): build platform and firmware-singleapp") {
 			image.inside {
-				sh 'rm -rf Platform-Espressif-ESP-WROVER-KIT-V4.1'
-				sh 'git clone --depth 1 https://github.com/MicroEJ/Platform-Espressif-ESP-WROVER-KIT-V4.1'
-				sh 'cd Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm'
+				sh "rm -rf ${platform_dir}"
+				sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
+				sh "cd ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm"
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=firmware-singleapp" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=firmware-singleapp -Dproject.rev=1.0.0 -Dskeleton.target.dir=firmware-singleapp'
-				sh 'cd firmware-singleapp && mmm publish local -D"platform-loader.target.platform.dir=$(pwd)/../Platform-Espressif-ESP-WROVER-KIT-V4.1/ESP32WROVER-Platform-GNUv52b96_xtensa-esp32-psram-1.7.1/source" -D"virtual.device.sim.only=SET"'
+				sh "cd firmware-singleapp && mmm publish local -Dplatform-loader.target.platform.dir=../${platform_dir}/${platform_target}/source -Dvirtual.device.sim.only=SET"
 			}
 		}
 	}
