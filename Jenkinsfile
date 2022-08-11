@@ -5,13 +5,18 @@ node('docker') {
 
 	def platform_dir = "Platform-Espressif-ESP-WROVER-KIT-V4.1"
 	def platform_url = "https://github.com/MicroEJ/${platform_dir}"
-	def platform_tag = "1.8.4"
-	def platform_target = "ESP32WROVER-Platform-GNUv52b96_xtensa-esp32-psram-${platform_tag}"
+	def platform_tag = "2.0.0"
+	def platform_target = "ESP32WROVER-Platform-GNUv84_xtensa-esp32-psram-${platform_tag}"
 
 	stage('Checkout') {
 		cleanWs()
 		checkout scm
 	}
+
+    ////////////////////////
+	/ Build of image 4.1.5 /
+	////////////////////////
+
 	stage('Lint check 4.1.5') {
 		docker.image('hadolint/hadolint:latest-alpine').inside {
 			sh 'hadolint --no-fail 4.1.5/Dockerfile'
@@ -56,20 +61,23 @@ node('docker') {
 	stage('Test: build platform') {
 		image.inside {
 			sh "rm -rf ${platform_dir}"
-			sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
+			sh "git clone --depth 1 --branch 1.8.4 ${platform_url}"
 			// Remove mccom-install not provided by SDK:4.1.5
 			sh "sed '/mccom-install/d' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy"
 			// Override mccom-install targets with empty ones
 			sh "sed '/<project.*/a <target name=\"readme:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
 			sh "sed '/<project.*/a <target name=\"changelog:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
 			// Add microEJCentral to the list of resolvers to fetch the dependencies
-			sh 'sed \'/<chain name=\"fetchRelease\">/a <url name=\"microEJForge\" m2compatible=\"true\"><artifact pattern=\"http://forge.microej.com/artifactory/microej-central-repository-release/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"http://forge.microej.com/artifactory/microej-central-repository-release/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url><url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>\' -i $MICROEJ_BUILDKIT_HOME/ivy/ivysettings.xml'
+			sh 'sed \'/<chain name=\"fetchRelease\">/a <url name=\"microEJDeveloper\" m2compatible=\"true\"><artifact pattern=\"http://forge.microej.com/artifactory/microej-developer-repository-release/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"http://forge.microej.com/artifactory/microej-developer-repository-release/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url><url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>\' -i $MICROEJ_BUILDKIT_HOME/ivy/ivysettings.xml'
 			// This fails because we don't have an eval license, but the build per see is started with eclipse
 			sh "build_module_local.sh ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ | grep 'No license found'"
 		}
 	}
 
-	// For each directory building a 5.+ image
+    ///////////////////////
+    / Build of images 5.+ /
+    ///////////////////////
+
 	def subfolders = sh(returnStdout: true, script: 'ls -d 5.*').trim().split("\n")
 	subfolders.each { folder ->
 		stage("Lint check ${folder}") {
