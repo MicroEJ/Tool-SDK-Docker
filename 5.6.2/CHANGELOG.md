@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0] - Unreleased
 ### Added
-- Add Dockerfile for sdk 5.6.0 based on 5.4.1
+- Add Dockerfile for sdk 5.6.2 based on 5.5.0
 
 ---
 _Markdown_  

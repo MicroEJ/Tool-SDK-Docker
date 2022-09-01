@@ -45,34 +45,49 @@ ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 WORKDIR ${HOME}
 
 # I) Install SDK
-RUN curl -O https://repository.microej.com/packages/SDK/22.06/zip/microej-sdk-22.06-linux_x86_64.zip && \
+RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21.11-linux_x86_64.zip && \
     mkdir -p $ECLIPSE_HOME && \
-    unzip microej-sdk-22.06-linux_x86_64.zip -d $ECLIPSE_HOME && \
-    rm -f microej-sdk-22.06-linux_x86_64.zip && \
+    unzip microej-sdk-21.11-linux_x86_64.zip -d $ECLIPSE_HOME && \
+    rm -f microej-sdk-21.11-linux_x86_64.zip && \
 # II) Configure SDK location
     mkdir -p $HOME/.microej && \
     chown $user:$group $HOME/.microej && \
-    echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig && \
-# III) Extract Build Kit from SDK
-    mkdir -p $BUILD_KIT_HOME && \
+    echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig
+# III) Update SDK to 5.6.2
+#    1. Uninstall SDK 5.6.0
+RUN    $ECLIPSE_HOME/MicroEJ-SDK \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -uninstallIU \
+    com.is2t.microej.sdk.feature.feature.group
+#    2. Install SDK 5.6.2
+RUN    $ECLIPSE_HOME/MicroEJ-SDK \
+    -application org.eclipse.equinox.p2.director \
+    -noSplash \
+    -repository \
+    https://repository.microej.com/p2/sdk/5.6.2 \
+    -installIUs \
+    com.is2t.microej.sdk.feature.feature.group
+# IV) Extract Build Kit from SDK
+RUN   mkdir -p $BUILD_KIT_HOME && \
 #     1. Extract build repository
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202206291607.jar repositories/microej-build-repository.zip && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202208311808.jar repositories/microej-build-repository.zip && \
     unzip repositories/microej-build-repository.zip -d $BUILD_KIT_HOME/microej-build-repository && \
     rm -rf repositories/ && \
 #     2. Extract mmm-cli
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202206291607.jar cli/mmm-cli.zip && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202208311809.jar cli/mmm-cli.zip && \
     unzip cli/mmm-cli.zip -d $BUILD_KIT_HOME/ && \
     rm -rf cli && \
 #     3. Extract ivysettings
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202206291607.jar resources/microej-ivysettings-5.4.xml && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202208311809.jar resources/microej-ivysettings-5.4.xml && \
     mkdir -p $BUILD_KIT_HOME/microej-module-repository/ && \
     mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
     rm -rf resources/ && \
 #     4. Set SDK version
-    echo 'sdk.version=5.6.0' > $BUILD_KIT_HOME/release.properties && \
- 	mkdir -p $HOME/.microej/build-repository-cache && \
-	ln -s $HOME/.microej/build-repository-cache $BUILD_KIT_HOME/microej-build-repository/cache && \
-	chown $user:$group $BUILD_KIT_HOME/microej-build-repository/cache
+    echo 'sdk.version=5.6.2' > $BUILD_KIT_HOME/release.properties && \
+    mkdir -p $HOME/.microej/build-repository-cache && \
+    ln -s $HOME/.microej/build-repository-cache $BUILD_KIT_HOME/microej-build-repository/cache && \
+    chown $user:$group $BUILD_KIT_HOME/microej-build-repository/cache
 
 # Good practice, switch back to user.
 USER ${user}
