@@ -60,10 +60,10 @@ RUN    $ECLIPSE_HOME/MicroEJ-SDK \
     -noSplash \
     -uninstallIU \
     com.is2t.microej.sdk.feature.feature.group
-#    1-bis. Remove plugins with multiple versions to workaround the bug https://youtrack.cross/issue/M0090IDE-3975
+#    2. Remove plugins with multiple versions
 RUN rm -rf $ECLIPSE_HOME/plugins/com.is2t.microej.wadapps.workbench_3.8.0.20201030-1117.jar
 RUN rm -rf $ECLIPSE_HOME/plugins/com.is2t.microEJ.fontGenerator_2.5.1.20211112-1727.jar
-#    2. Install SDK 5.6.2
+#    3. Install SDK 5.6.2
 RUN    $ECLIPSE_HOME/MicroEJ-SDK \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
