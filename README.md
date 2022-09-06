@@ -1,5 +1,6 @@
+![SDK 5.6 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.6.json)
+![SDK 5.5 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.5.json)
 ![SDK 5.4 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.4.json)
-
 ![SDK 4.1 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_4.1.json)
 
 # Docker for MicroEJ BuildKit SDK
@@ -109,6 +110,5 @@ for more information.
 
 ---
 _Markdown_  
-_Copyright 2021 MicroEJ Corp. All rights reserved._  
-_This library is provided in source code for use, modification and test, subject to license terms._  
-_Any modification of the source code will break MicroEJ Corp. warranties on the whole library._  
+_Copyright 2021-2022 MicroEJ Corp. All rights reserved._
+_Use of this source code is governed by a BSD-style license that can be found with this software._

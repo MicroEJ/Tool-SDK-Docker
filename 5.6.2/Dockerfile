@@ -1,6 +1,6 @@
 # Dockerfile
 #
-# Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+# Copyright 2022 MicroEJ Corp. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be found with this software.
 FROM eclipse-temurin:8
 
@@ -27,14 +27,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-RUN echo 'ACTION!="add", GOTO="usbdongle_end"\n' \
-    'SUBSYSTEM=="usb", GOTO="usbdongle_start"\n' \
-    'SUBSYSTEMS=="usb", GOTO="usbdongle_start"\n' \
-    'GOTO="usbdongle_end"\n' \
-    'LABEL="usbdongle_start"\n' \
-    'ATTRS{idVendor}=="096e" , ATTRS{idProduct}=="0006" , MODE="0666"\n' \
-    'LABEL="usbdongle_end"' > /etc/udev/rules.d/91-usbdongle.rules
-
 # Set the new user parameter.
 ARG user=microej
 ARG group=microej
@@ -53,46 +45,49 @@ ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 WORKDIR ${HOME}
 
 # I) Install SDK
-RUN curl -O https://repository.microej.com/packages/SDK/21.03/zip/microej-sdk-21.03-linux_x86_64.zip && \
+RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21.11-linux_x86_64.zip && \
     mkdir -p $ECLIPSE_HOME && \
-    unzip microej-sdk-21.03-linux_x86_64.zip -d $ECLIPSE_HOME && \
-    rm -f microej-sdk-21.03-linux_x86_64.zip && \
+    unzip microej-sdk-21.11-linux_x86_64.zip -d $ECLIPSE_HOME && \
+    rm -f microej-sdk-21.11-linux_x86_64.zip && \
 # II) Configure SDK location
     mkdir -p $HOME/.microej && \
     chown $user:$group $HOME/.microej && \
     echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig && \
-# III) Update SDK to 5.4.1
-#    1. Uninstall SDK 5.4.0
-    $ECLIPSE_HOME/MicroEJ-SDK \
+# III) Update SDK to 5.6.2
+#    1. Uninstall SDK 5.6.0
+	$ECLIPSE_HOME/MicroEJ-SDK \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -uninstallIU \
     com.is2t.microej.sdk.feature.feature.group && \
-#    2. Install SDK 5.4.1
-    $ECLIPSE_HOME/MicroEJ-SDK \
+#    2. Remove plugins with multiple versions
+	rm -rf $ECLIPSE_HOME/plugins/com.is2t.microej.wadapps.workbench_3.8.0.20201030-1117.jar && \
+	rm -rf $ECLIPSE_HOME/plugins/com.is2t.microEJ.fontGenerator_2.5.1.20211112-1727.jar && \
+#    3. Install SDK 5.6.2
+	$ECLIPSE_HOME/MicroEJ-SDK \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -repository \
-    https://repository.microej.com/p2/sdk/5.4.1 \
+    https://repository.microej.com/p2/sdk/5.6.2 \
     -installIUs \
     com.is2t.microej.sdk.feature.feature.group && \
 # IV) Extract Build Kit from SDK
-    mkdir -p $BUILD_KIT_HOME && \
+	mkdir -p $BUILD_KIT_HOME && \
 #     1. Extract build repository
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202104161741.jar repositories/microej-build-repository.zip && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202208311808.jar repositories/microej-build-repository.zip && \
     unzip repositories/microej-build-repository.zip -d $BUILD_KIT_HOME/microej-build-repository && \
     rm -rf repositories/ && \
 #     2. Extract mmm-cli
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar cli/mmm-cli.zip && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202208311809.jar cli/mmm-cli.zip && \
     unzip cli/mmm-cli.zip -d $BUILD_KIT_HOME/ && \
     rm -rf cli && \
 #     3. Extract ivysettings
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.4.0.202104161741.jar resources/microej-ivysettings-5.4.xml && \
+    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.6.0.202208311809.jar resources/microej-ivysettings-5.4.xml && \
     mkdir -p $BUILD_KIT_HOME/microej-module-repository/ && \
     mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
     rm -rf resources/ && \
 #     4. Set SDK version
-    echo 'sdk.version=5.4.1' > $BUILD_KIT_HOME/release.properties && \
+    echo 'sdk.version=5.6.2' > $BUILD_KIT_HOME/release.properties && \
     mkdir -p $HOME/.microej/build-repository-cache && \
     ln -s $HOME/.microej/build-repository-cache $BUILD_KIT_HOME/microej-build-repository/cache && \
     chown $user:$group $BUILD_KIT_HOME/microej-build-repository/cache
