@@ -52,27 +52,27 @@ RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21
 # II) Configure SDK location
     mkdir -p $HOME/.microej && \
     chown $user:$group $HOME/.microej && \
-    echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig
+    echo "[options]\neclipse.home=\"${ECLIPSE_HOME}\"" > $HOME/.microej/.mmmconfig && \
 # III) Update SDK to 5.6.2
 #    1. Uninstall SDK 5.6.0
-RUN    $ECLIPSE_HOME/MicroEJ-SDK \
+	$ECLIPSE_HOME/MicroEJ-SDK \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -uninstallIU \
-    com.is2t.microej.sdk.feature.feature.group
+    com.is2t.microej.sdk.feature.feature.group && \
 #    2. Remove plugins with multiple versions
-RUN rm -rf $ECLIPSE_HOME/plugins/com.is2t.microej.wadapps.workbench_3.8.0.20201030-1117.jar
-RUN rm -rf $ECLIPSE_HOME/plugins/com.is2t.microEJ.fontGenerator_2.5.1.20211112-1727.jar
+	rm -rf $ECLIPSE_HOME/plugins/com.is2t.microej.wadapps.workbench_3.8.0.20201030-1117.jar && \
+	rm -rf $ECLIPSE_HOME/plugins/com.is2t.microEJ.fontGenerator_2.5.1.20211112-1727.jar && \
 #    3. Install SDK 5.6.2
-RUN    $ECLIPSE_HOME/MicroEJ-SDK \
+	$ECLIPSE_HOME/MicroEJ-SDK \
     -application org.eclipse.equinox.p2.director \
     -noSplash \
     -repository \
     https://repository.microej.com/p2/sdk/5.6.2 \
     -installIUs \
-    com.is2t.microej.sdk.feature.feature.group
+    com.is2t.microej.sdk.feature.feature.group && \
 # IV) Extract Build Kit from SDK
-RUN   mkdir -p $BUILD_KIT_HOME && \
+	mkdir -p $BUILD_KIT_HOME && \
 #     1. Extract build repository
     unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e.offlinerepo_1.6.1.202208311808.jar repositories/microej-build-repository.zip && \
     unzip repositories/microej-build-repository.zip -d $BUILD_KIT_HOME/microej-build-repository && \
