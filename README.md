@@ -1,3 +1,4 @@
+![SDK 5.8 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.8.json)
 ![SDK 5.7 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.7.json)
 ![SDK 5.6 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.6.json)
 ![SDK 5.5 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.5.json)
