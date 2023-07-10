@@ -64,7 +64,7 @@ RUN curl -O https://repository.microej.com/packages/SDK/23.07/zip/microej-sdk-23
     unzip cli/mmm-cli.zip -d $BUILD_KIT_HOME/ && \
     rm -rf cli && \
 #     3. Extract ivysettings
-    unzip $ECLIPSE_HOME/plugins/com.is2t.eclipse.plugin.easyant4e_2.7.1.202307031455.jar resources/microej-ivysettings-5.4.xml && \
+    unzip $ECLIPSE_HOME/plugins/org.apache.ivyde.eclipse_2.5.1.final-202307031339-RELEASE/ivyde-eclipse.jar resources/microej-ivysettings-5.4.xml && \
     mkdir -p $BUILD_KIT_HOME/microej-module-repository/ && \
     mv resources/microej-ivysettings-5.4.xml $BUILD_KIT_HOME/microej-module-repository/ivysettings.xml && \
     rm -rf resources/ && \
