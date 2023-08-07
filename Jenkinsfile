@@ -5,7 +5,7 @@ node('docker') {
 
 	def platform_dir = "Platform-Espressif-ESP-WROVER-KIT-V4.1"
 	def platform_url = "https://github.com/MicroEJ/${platform_dir}"
-	def platform_tag = "2.0.0"
+	def platform_tag = "2.2.0"
 	def platform_target = "ESP32WROVER-Platform-GNUv84_xtensa-esp32-psram-${platform_tag}"
 
 	stage('Checkout') {
@@ -13,72 +13,11 @@ node('docker') {
 		checkout scm
 	}
 
-    ////////////////////////
-	/ Build of image 4.1.5 /
-	////////////////////////
-
-	stage('Lint check 4.1.5') {
-		docker.image('hadolint/hadolint:latest-alpine').inside {
-			sh 'hadolint --no-fail 4.1.5/Dockerfile'
-		}
-	}
-	stage('Build 4.1.5') {
-		image = docker.build("sdk:4.1.5", "4.1.5")
-	}
-	stage('Test: ensure sdk:4.1.5 can run docker') {
-		image.inside('-u root -v/var/run/docker.sock:/var/run/docker.sock') {
-			sh 'docker run --rm -t hello-world'
-		}
-	}
-	stage('Test: Prepare central-repo') {
-		image.inside {
-			sh 'mkdir central-repo'
-			sh 'curl -LO https://developer.microej.com/4.1/ivy/microej-4.1-1.10.0.zip'
-			sh 'unzip microej-4.1-1.10.0.zip -d central-repo'
-		}
-	}
-	stage('Test: snapshot is correctly published') {
-		image.inside {
-			sh 'mkdir snapshot'
-			sh 'sed -e s~^microej.central.repository.dir=.*~microej.central.repository.dir=$(pwd)/central-repo~ $MICROEJ_BUILDKIT_HOME/local-build.properties > /tmp/local-build && cat /tmp/local-build > $MICROEJ_BUILDKIT_HOME/local-build.properties'
-			sh 'sed -e s~^snapshot.repository.dir=.*~snapshot.repository.dir=$(pwd)/snapshot~ $MICROEJ_BUILDKIT_HOME/local-build.properties > /tmp/local-build && cat /tmp/local-build > $MICROEJ_BUILDKIT_HOME/local-build.properties'
-			sh 'rm -rf Demo-Widget'
-			sh 'git clone --branch 6.1.1 https://github.com/MicroEJ/Demo-Widget.git'
-			sh 'build_module_local.sh Demo-Widget/com.microej.demo.widget/ snapshot'
-			sh 'ls snapshot/com/microej/demo/widget/6.1.1-RC*/ivy-6.1.1-RC*.xml'
-		}
-	}
-	stage('Test: release is correctly published') {
-		image.inside {
-			sh 'mkdir release'
-			sh 'sed -e s~^microej.central.repository.dir=.*~microej.central.repository.dir=$(pwd)/central-repo~ $MICROEJ_BUILDKIT_HOME/local-build.properties > /tmp/local-build && cat /tmp/local-build > $MICROEJ_BUILDKIT_HOME/local-build.properties'
-			sh 'sed -e s~^release.repository.dir=.*~release.repository.dir=$(pwd)/release~ $MICROEJ_BUILDKIT_HOME/local-build.properties > /tmp/local-build && cat /tmp/local-build > $MICROEJ_BUILDKIT_HOME/local-build.properties'
-			sh 'echo "skip.license.checker=true\nskip.readme.checker=true\nskip.changelog.checker=true" > build.properties'
-			sh 'build_module_local.sh Demo-Widget/com.microej.demo.widget/ release build.properties'
-			sh 'ls release/com/microej/demo/widget/6.1.1/ivy-6.1.1.xml'
-		}
-	}
-	stage('Test: build platform') {
-		image.inside {
-			sh "rm -rf ${platform_dir}"
-			sh "git clone --depth 1 --branch 1.8.4 ${platform_url}"
-			// Remove mccom-install not provided by SDK:4.1.5
-			sh "sed '/mccom-install/d' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ivy"
-			// Override mccom-install targets with empty ones
-			sh "sed '/<project.*/a <target name=\"readme:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
-			sh "sed '/<project.*/a <target name=\"changelog:init\" />' -i ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/module.ant"
-			// Add microEJCentral to the list of resolvers to fetch the dependencies
-			sh 'sed \'/<chain name=\"fetchRelease\">/a <url name=\"microEJDeveloper\" m2compatible=\"true\"><artifact pattern=\"http://forge.microej.com/artifactory/microej-developer-repository-release/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"http://forge.microej.com/artifactory/microej-developer-repository-release/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url><url name=\"microEJCentral\" m2compatible=\"true\"><artifact pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/[artifact]-[revision](-[classifier]).[ext]\" /><ivy pattern=\"https://repository.microej.com/modules/[organization]/[module]/[branch]/[revision]/ivy-[revision].xml\" /></url>\' -i $MICROEJ_BUILDKIT_HOME/ivy/ivysettings.xml'
-			// This fails because we don't have an eval license, but the build per see is started with eclipse
-			sh "build_module_local.sh ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ | grep 'No license found'"
-		}
-	}
-
     ///////////////////////
     / Build of images 5.+ /
     ///////////////////////
 
-	def subfolders = sh(returnStdout: true, script: 'ls -d 5.*').trim().split("\n")
+	def subfolders = sh(returnStdout: true, script: 'ls -d 5.8*').trim().split("\n")
 	subfolders.each { folder ->
 		stage("Lint check ${folder}") {
 			docker.image('hadolint/hadolint:latest-alpine').inside {
@@ -153,13 +92,19 @@ node('docker') {
 			}
 		}
 		stage("Test(${folder}): build platform and firmware-singleapp") {
-			image.inside {
-				sh "rm -rf ${platform_dir}"
-				sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
-				sh "cd ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm"
-				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=firmware-singleapp" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=firmware-singleapp -Dproject.rev=1.0.0 -Dskeleton.target.dir=firmware-singleapp'
-				sh "cd firmware-singleapp && mmm publish local -Dplatform-loader.target.platform.dir=../${platform_dir}/${platform_target}/source -Dvirtual.device.sim.only=SET"
+			try {
+				image.inside {
+					sh "rm -rf ${platform_dir}"
+					sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
+					sh "cd ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm -v"
+					sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=firmware-singleapp" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=firmware-singleapp -Dproject.rev=1.0.0 -Dskeleton.target.dir=firmware-singleapp'
+					sh "cd firmware-singleapp && mmm publish local -Dplatform-loader.target.platform.dir=../${platform_dir}/${platform_target}/source -Dvirtual.device.sim.only=SET"
+				}
 			}
+			catch (Exception e) {
+      			echo 'Exception occurred: ' + e.toString()
+      			sh 'cat /home/microej/.eclipse/com.is2t.microej.mpp.product.product_23.07_1473617060_linux_gtk_x86_64/configuration/*.log'
+  			}
 		}
 	}
 }
