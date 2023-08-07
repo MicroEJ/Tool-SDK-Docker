@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.0] - 2023-08-07
 ### Added
-- Add Dockerfile for sdk 5.8.0
+- Add Dockerfile for sdk 5.8.0 jdk11
 
 ## [1.3.0] - 2023-03-10
 ### Added
