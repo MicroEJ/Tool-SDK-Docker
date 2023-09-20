@@ -17,7 +17,7 @@ node('docker') {
     / Build of images 5.+ /
     ///////////////////////
 
-	def subfolders = sh(returnStdout: true, script: 'ls -d 5.8*').trim().split("\n")
+	def subfolders = sh(returnStdout: true, script: 'ls -d 5.8.1*').trim().split("\n")
 	subfolders.each { folder ->
 		stage("Lint check ${folder}") {
 			docker.image('hadolint/hadolint:latest-alpine').inside {
