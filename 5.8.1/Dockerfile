@@ -45,7 +45,8 @@ ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 WORKDIR ${HOME}
 
 ## I) Install SDK
-RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21.11-linux_x86_64.zip && \
+ARG SDK_DISTRIBUTION_URL=""
+RUN curl -O ${SDK_DISTRIBUTION_URL} && \
     mkdir -p $ECLIPSE_HOME && \
     unzip microej-sdk-21.11-linux_x86_64.zip -d $ECLIPSE_HOME && \
     rm -f microej-sdk-21.11-linux_x86_64.zip && \
@@ -92,5 +93,11 @@ RUN curl -O https://repository.microej.com/packages/SDK/21.11/zip/microej-sdk-21
     ln -s $HOME/.microej/build-repository-cache $BUILD_KIT_HOME/microej-build-repository/cache && \
     chown $user:$group $BUILD_KIT_HOME/microej-build-repository/cache
 
+
+ADD ./run.sh /run.sh
+RUN chmod a+x /run.sh
+
 # Good practice, switch back to user.
 USER ${user}
+
+ENTRYPOINT ["/run.sh"]
