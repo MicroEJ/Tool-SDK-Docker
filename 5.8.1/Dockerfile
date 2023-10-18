@@ -45,9 +45,9 @@ ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 WORKDIR ${HOME}
 
 ## I) Install SDK
-ARG SDK_DISTRIBUTION_URL=""
+ARG SDK_DISTRIBUTION_BASE_URL=""
 ARG SDK_DISTRIBUTION_TOKEN=""
-RUN curl -f -H "X-JFrog-Art-Api:${SDK_DISTRIBUTION_TOKEN}" -O ${SDK_DISTRIBUTION_URL} && \
+RUN curl -f -H "X-JFrog-Art-Api:${SDK_DISTRIBUTION_TOKEN}" -O ${SDK_DISTRIBUTION_BASE_URL}/21.11/microej-sdk-21.11-linux_x86_64.zip && \
     mkdir -p $ECLIPSE_HOME && \
     unzip microej-sdk-21.11-linux_x86_64.zip -d $ECLIPSE_HOME && \
     rm -f microej-sdk-21.11-linux_x86_64.zip && \
