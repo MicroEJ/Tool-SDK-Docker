@@ -31,7 +31,7 @@ node('docker') {
 		}
 		stage("Test: ensure sdk:${folder} can run docker") {
 			image.inside('-u root -v/var/run/docker.sock:/var/run/docker.sock') {
-				sh 'docker run --rm -t hello-world'
+				sh 'docker run --rm -e ACCEPT_MICROEJ_SDK_EULA=YES -t hello-world'
 			}
 		}
 		stage("Test(${folder}): build microej-studio-rebrand") {
