@@ -30,8 +30,8 @@ node('docker') {
 			image = docker.build("sdk:${folder}", "--build-arg SDK_DISTRIBUTION_BASE_URL=${sdk_distribution_base_url} --build-arg SDK_DISTRIBUTION_TOKEN=${sdk_distribution_token} ${folder}")
 		}
 		stage("Test: ensure sdk:${folder} can run docker") {
-			image.inside('-u root -v/var/run/docker.sock:/var/run/docker.sock') {
-				sh 'docker run --rm -e ACCEPT_MICROEJ_SDK_EULA="YES" -t hello-world'
+			image.inside('-u root -v/var/run/docker.sock:/var/run/docker.sock -e ACCEPT_MICROEJ_SDK_EULA="YES"') {
+				sh 'docker run --rm -t hello-world'
 			}
 		}
 		stage("Test(${folder}): build microej-studio-rebrand") {
