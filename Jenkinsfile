@@ -7,6 +7,8 @@ node('docker') {
 	def platform_url = "https://github.com/MicroEJ/${platform_dir}"
 	def platform_tag = "2.2.0"
 	def platform_target = "ESP32WROVER-Platform-GNUv84_xtensa-esp32-psram-${platform_tag}"
+	def sdk_distribution_base_url="https://forge.microej.com/artifactory/microej-sdk5-repository-release/"
+	def sdk_distribution_token="AKCp8pRQi5d9Rgf5xPf5ysTUc7D1yv7m4cn9azMLwQKS1W2jPFF2rwJBCbxKSqfDTaHkPbKRG"
 
 	stage('Checkout') {
 		cleanWs()
@@ -25,7 +27,7 @@ node('docker') {
 			}
 		}
 		stage("Build ${folder}") {
-			image = docker.build("sdk:${folder}", "${folder}")
+			image = docker.build("sdk:${folder}", "--build-arg SDK_DISTRIBUTION_BASE_URL=${sdk_distribution_base_url} --build-arg SDK_DISTRIBUTION_TOKEN=${sdk_distribution_token} ${folder}")
 		}
 		stage("Test: ensure sdk:${folder} can run docker") {
 			image.inside('-u root -v/var/run/docker.sock:/var/run/docker.sock') {
