@@ -1,4 +1,4 @@
-// Copyright 2021-2022 MicroEJ Corp. All rights reserved.
+// Copyright 2021-2023 MicroEJ Corp. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be found with this software.
 node('docker') {
 	def image
@@ -30,72 +30,72 @@ node('docker') {
 			image = docker.build("sdk:${folder}", "--build-arg SDK_DISTRIBUTION_BASE_URL=${sdk_distribution_base_url} --build-arg SDK_DISTRIBUTION_TOKEN=${sdk_distribution_token} ${folder}")
 		}
 		stage("Test: ensure sdk:${folder} can run docker") {
-			image.inside('-u root -v /var/run/docker.sock:/var/run/docker.sock -e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-u root -v /var/run/docker.sock:/var/run/docker.sock -e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'docker run --rm -t hello-world'
 			}
 		}
 		stage("Test(${folder}): build microej-studio-rebrand") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-studio-rebrand" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=microej-studio-rebrand -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-studio-rebrand'
 				sh 'cd microej-studio-rebrand && mmm publish local -Dizpack.microej.product.location=${ECLIPSE_HOME} -Dproduct.target.os=linux64 -Dpublish.main.type=zip'
 				sh 'ls microej-studio-rebrand/target~/artifacts/microej-studio-rebrand.zip'
 			}
 		}
 		stage("Test(${folder}): build microej-javalib") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-javalib" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-javalib'
 				sh 'cd microej-javalib && mmm publish local'
 				sh 'ls microej-javalib/target~/artifacts/myjavalib.jar'
 			}
 		}
 		stage("Test(${folder}): build addon-processor") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=addon-processor" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=addon-processor'
 				sh 'cd addon-processor && mmm publish local'
 				sh 'ls addon-processor/target~/artifacts/myjavalib.adp'
 			}
 		}
 		stage("Test(${folder}): build microej-javaapi") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-javaapi" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-javaapi'
 				sh 'cd microej-javaapi && mmm publish local'
 				sh 'ls microej-javaapi/target~/artifacts/myjavalib.jar'
 			}
 		}
 		stage("Test(${folder}): build microej-javaimpl") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-javaimpl" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-javaimpl'
 				sh 'cd microej-javaimpl && mmm publish local'
 				sh 'ls microej-javaimpl/target~/artifacts/myjavalib.rip'
 			}
 		}
 		stage("Test(${folder}): build microej-meta-build") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-meta-build" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-meta-build'
 				sh 'cd microej-meta-build && mmm publish local'
 			}
 		}
 		stage("Test(${folder}): build microej-mock") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=microej-mock" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=microej-mock'
 				sh 'cd microej-mock && mmm publish local'
 			}
 		}
 		stage("Test(${folder}): build artifact-repository") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=artifact-repository" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=artifact-repository'
 				sh 'cd artifact-repository && mmm publish local'
 			}
 		}
 		stage("Test(${folder}): build application") {
-			image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+			image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 				sh 'mmm init -D"skeleton.org=com.is2t.easyant.skeletons" -D"skeleton.module=application" -D"skeleton.rev=+" -D"project.org=com.mycompany" -Dproject.module=myjavalib -Dproject.rev=1.0.0 -Dskeleton.target.dir=application'
 				sh 'cd application && mmm publish local'
 			}
 		}
 		stage("Test(${folder}): build platform and firmware-singleapp") {
 			try {
-				image.inside('-e ACCEPT_MICROEJ_SDK_EULA=YES') {
+				image.inside('-e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES') {
 					sh "rm -rf ${platform_dir}"
 					sh "git clone --depth 1 --branch ${platform_tag} ${platform_url}"
 					sh "cd ${platform_dir}/ESP32-WROVER-Xtensa-FreeRTOS-configuration/ && mmm -v"
