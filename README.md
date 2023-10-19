@@ -22,22 +22,30 @@ You can also build them yourself following build instruction bellow and our [Git
 For MicroEJ SDK version `5.4.1` and above, please refer to
 <https://docs.microej.com/en/latest/ApplicationDeveloperGuide/mmm.html#command-line-interface>.
 
+The use of the SDK Docker images requires to approve the End-User License Agreement.
+You can accept the EULA by setting the **ACCEPT_MICROEJ_SDK_EULA_XXX** environment variable to **YES**,
+whereis **XXX** is the version of the EULA version, for example `ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES`.
+
 Start the image for interactive usage:
 
 ``` console
-$ docker run --rm -it microej/sdk:5.4.1 bash
+$ docker run --rm -it -e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES microej/sdk:5.8.1 bash
 ```
 
 Build a project from a local folder:
 
 ``` console
-$ docker run --rm -v PATH/TO/PROJECT:/project -w /project microej/sdk:5.4.1 mmm build
+$ docker run --rm -v PATH/TO/PROJECT:/project -w /project -e ACCEPT_MICROEJ_SDK_EULA_V3_1B=YES microej/sdk:5.8.1 mmm build
 ```
 
-You can also build the image yourself from `Dockerfile`:
+You can also build the image yourself from the `Dockerfile`.
+This requires to:
+- [retrieve the Portable version of the SDK](https://docs.microej.com/en/latest/SDKUserGuide/installSDKDistributionPortable.html)
+- upload it to an accessible remote location in a folder named after the SDK version. For example if your base URL is `https://my.server/microej-sdk` and the SDK version is 23.07, the SDK Distribution should be uploaded at `https://my.server/microej-sdk/23.07/microej-sdk-23.07-linux_x86_64.zip`.
+- launch the build of the image with the `SDK_DISTRIBUTION_BASE_URL` argument:
 
 ``` console
-$ docker build -t microej/sdk:5.4.1 5.4.1
+$ docker build --build-arg="SDK_DISTRIBUTION_BASE_URL=https://my.server/microej-sdk" -t microej/sdk:5.8.1 5.8.1
 ```
 
 ### MicroEJ SDK version `4.1.5` to `5.3.1`
@@ -112,5 +120,5 @@ for more information.
 
 ---
 _Markdown_  
-_Copyright 2021-2022 MicroEJ Corp. All rights reserved._
+_Copyright 2021-2023 MicroEJ Corp. All rights reserved._
 _Use of this source code is governed by a BSD-style license that can be found with this software._
