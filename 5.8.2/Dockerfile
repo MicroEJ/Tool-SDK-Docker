@@ -41,6 +41,10 @@ ENV ECLIPSE_HOME=/opt/eclipse
 ENV BUILD_KIT_HOME=/opt/buildKit
 ENV PATH=$BUILD_KIT_HOME/bin:$PATH
 
+# Remove Java security "SHA1 denyAfter 2019-01-01" from "jdk.jar.disabledAlgorithms" property to avoid 
+# "License check failed [tampered (3)])" error message when MicroEJ dongle used on old MicroEJ Architecture
+RUN sed -i 's/SHA1 denyAfter 2019-01-01,//g' /opt/java/openjdk/jre/lib/security/java.security
+
 # Set workdir
 WORKDIR ${HOME}
 

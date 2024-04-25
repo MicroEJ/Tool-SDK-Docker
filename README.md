@@ -17,6 +17,10 @@ for various MicroEJ SDK versions.
 All images referenced in this document are available in our [Docker Hub repository](https://hub.docker.com/u/microej/).
 You can also build them yourself following build instruction bellow and our [Github repository](https://github.com/MicroEJ/Tool-SDK-Docker).
 
+### Version
+
+Since SDK version `5.6.2` the SDK has been available in 2 versions: JDK 8 and JDK 11. The JDK11 image is suffixed with `-jdk11`. The image tagged lastest is version `5.8.2-jdk11`.
+
 ### MicroEJ SDK version `5.4.1` and above
 
 For MicroEJ SDK version `5.4.1` and above, please refer to
