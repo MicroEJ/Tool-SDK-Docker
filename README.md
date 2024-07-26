@@ -1,3 +1,4 @@
+![SDK 5.9 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.9.json)
 ![SDK 5.8 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.8.json)
 ![SDK 5.7 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.7.json)
 ![SDK 5.6 Compatible](https://shields.microej.com/endpoint?url=https://repository.microej.com/packages/badges/sdk_5.6.json)
@@ -19,7 +20,7 @@ You can also build them yourself following build instruction bellow and our [Git
 
 ### Version
 
-Since SDK version `5.6.2` the SDK has been available in 2 versions: JDK 8 and JDK 11. The JDK11 image is suffixed with `-jdk11`. The image tagged lastest is version `5.8.2-jdk11`.
+Since SDK version `5.6.2` the SDK has been available in 2 versions: JDK 8 and JDK 11. The JDK11 image is suffixed with `-jdk11`. The image tagged lastest is version `5.9.0-jdk11`.
 
 ### MicroEJ SDK version `5.4.1` and above
 
@@ -124,5 +125,5 @@ for more information.
 
 ---
 _Markdown_  
-_Copyright 2021-2023 MicroEJ Corp. All rights reserved._
+_Copyright 2021-2024 MicroEJ Corp. All rights reserved._
 _Use of this source code is governed by a BSD-style license that can be found with this software._
